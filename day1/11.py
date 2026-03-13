@@ -9,7 +9,7 @@ class Soln:
                 pallindroms.append(word)
 
         return unique_words,pallindroms
-    
+
 
 text=str(input("enter a text "))
 obj=Soln()

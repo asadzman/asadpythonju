@@ -16,7 +16,7 @@ class BankAccount:
 
     def get_balance(self):
         return self.balance
-    
+
     def change_pin(self, pin):
         self.pin = pin
         print(f"PIN changed to {pin} successfully!")
@@ -39,7 +39,7 @@ class FreeSavingsAccount(SavingsAccount):
         total_deduction = wth + self.charge
         if self.balance < total_deduction:
             print("Withdrawal not possible due to insufficient funds (including fees)!")
-            return 
+            return
         self.balance -= total_deduction
         print(f"Amount: {wth} withdrawn. Fee: {self.charge} applied.")
 
@@ -55,7 +55,7 @@ while True:
     print("3. Check Balance")
     print("4. Apply Interest")
     print("5. Exit")
-    
+
     choice = input("Select an option: ")
 
     if choice == '1':

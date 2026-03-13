@@ -1,8 +1,8 @@
 import time
 INT_MAX=100000
 
-a=int(input("enter the value a "))
-q=int(input("enter the value q "))
+a=int(input("enter the value a: "))
+q=int(input("enter the value q: "))
 
 
 start=int(time.time())

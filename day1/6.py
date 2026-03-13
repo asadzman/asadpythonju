@@ -1,73 +1,91 @@
-class USER_DATA:
-    def __init__(self, list_data):
-        self.list = list_data
-        self.MIN_AGE = 16
-        self.dict = []
-        self.user_names = []
+# Write a simple program which loops over a list of user data (tuples containing a username,
+# email and age) and adds each user to a directory if the user is at least 16 years old. You do
+# not need to store the age. Write a simple exception hierarchy which defines a different
+# exception for each of these error conditions:
+# ● the username is not unique
+# ● the age is not a positive integer
+# ● the user is under 16
+# ● the email address is not valid (a simple check for a username, the @ symbol and a
+# domain name is sufficient)
+# Raise these exceptions in your program where appropriate. Whenever an exception occurs,
+# your program should move onto the next set of data in the list. Print a different error
+# message for each different kind of exception.
+import re
 
-    def is_valid(self, name, email):
-        return email.endswith(".com") and "@" in email and name in email
 
-    def add_users(self):
-        idx = 1
-        for user in self.list:
-            errorRaise = False
-            name = user[0]
-            email = user[1]
-            age = user[2]
+# Base exception
+class UserError(Exception):
+    pass
 
-            try:
-                if name in self.user_names:
-                    errorRaise = True
-                    raise ValueError("user name not unique !")
-            except ValueError as e:
-                print(f"For user {idx} : {e}")
 
-            try:
-                if age < 0:
-                    errorRaise = True
-                    raise ValueError("age is not positive ")
-            except ValueError as e:
-                print(f"For user {idx} : {e}")
+class UsernameNotUniqueError(UserError):
+    pass
 
-            try:
-                if not name or not self.is_valid(name, email):
-                    errorRaise = True
-                    raise ValueError("email not valid")
-            except ValueError as e:
-                print(f"For user {idx} : {e}")
 
-            if not errorRaise:
-                if age < self.MIN_AGE:
-                    self.dict.append({"name": name, "email": email})
-                else:
-                    self.dict.append({"name": name, "email": email, "age": age})
-            
-            self.user_names.append(name)
-            idx += 1
+class InvalidAgeError(UserError):
+    pass
 
-    def print_users(self):
-        for d in self.dict:
-            name = d.get("name")
-            email = d.get("email")
-            age = d.get("age")
 
-            if name:
-                print(name, end="\t")
-            if email:
-                print(email, end="\t")
-            if age:
-                print(age, end="\t")
-            print()
+class UnderAgeError(UserError):
+    pass
 
-test_list = [
-    ["alice", "alice@test.com", 25],
-    ["bob", "bob@mail.com", 12],
-    ["alice", "alice2@test.com", 30],
-    ["charlie", "wrong-email", 20],
-    ["dave", "dave@test.com", -1]
-]
 
-user_data = USER_DATA(test_list)
-user_data.add_users()
-user_data.print_users()
+class InvalidEmailError(UserError):
+    pass
+
+
+directory = {}
+
+
+def validate_user(username, email, age):
+    # username unique check
+    if username in directory:
+        raise UsernameNotUniqueError("Username already exists.")
+
+    # age must be positive integer
+    if not age.isdigit() or int(age) <= 0:
+        raise InvalidAgeError("Age must be a positive integer.")
+
+    age = int(age)
+
+    # age restriction
+    if age < 16:
+        raise UnderAgeError("User must be at least 16 years old.")
+
+    # simple email validation
+    if not re.match(r"^[\w]+@[\w]+\.[\w]+$", email):
+        raise InvalidEmailError("Email format is invalid.")
+
+    return age
+
+
+n = int(input("Enter number of users: "))
+
+for _ in range(n):
+    try:
+        username = input("Enter username: ")
+        email = input("Enter email: ")
+        age = input("Enter age: ")
+
+        validate_user(username, email, age)
+
+        # store only username and email
+        directory[username] = email
+        print("User added successfully\n")
+
+    except UsernameNotUniqueError as e:
+        print("Error:", e, "\n")
+
+    except InvalidAgeError as e:
+        print("Error:", e, "\n")
+
+    except UnderAgeError as e:
+        print("Error:", e, "\n")
+
+    except InvalidEmailError as e:
+        print("Error:", e, "\n")
+
+
+print("\nFinal User Directory:")
+for username, email in directory.items():
+    print(username, "->", email)

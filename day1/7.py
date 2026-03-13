@@ -1,16 +1,19 @@
 import os
 
-def walk(dir_path):
-    items = os.listdir(dir_path)
+def findfiles(directory):
+    for entry in os.listdir(directory):
+        path = os.path.join(directory, entry)
 
-    for item in items:
-        full_path = os.path.join(dir_path, item)
-
-        if os.path.isdir(full_path):
-            walk(full_path)
+        if os.path.isdir(path):
+            yield from findfiles(path)   # recursive call
         else:
-            abs_path = os.path.abspath(full_path)
-            print(abs_path)
+            yield path
 
-dir_name = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-walk(dir_name)
+
+# user input
+directory = input("Enter directory path: ")
+
+print("Files found in directory tree:\n")
+
+for file in findfiles(directory):
+    print(file)
